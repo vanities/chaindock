@@ -1,8 +1,8 @@
 SHELL := /bin/bash
 SERVICE_NAME = chaindock
 
-DOCKER_PROD_PATH = docker-compose.prod.yml
-DOCKER_TEST_PATH = docker-compose.test.yml
+DOCKER_MAIN_PATH = docker-compose.mainnet.yml
+DOCKER_TEST_PATH = docker-compose.testnet.yml
 
 DOCKER_COMPOSE = docker-compose --file
 
@@ -13,14 +13,14 @@ POSTGRES_PASSWORD = Sn8d3peUDEySVIOzMcdKgWy2
 POSTGRES_DB = yrseXmL3TYijdthEzXoOleDE
 
 up: env
-	$(DOCKER_COMPOSE) $(DOCKER_PROD_PATH) up
+	$(DOCKER_COMPOSE) $(DOCKER_MAIN_PATH) up
 
 up-test:
 	$(DOCKER_COMPOSE) $(DOCKER_TEST_PATH) up
 
 down:
 	$(DOCKER_COMPOSE) $(DOCKER_TEST_PATH) down --remove-orphans
-	$(DOCKER_COMPOSE) $(DOCKER_PROD_PATH) down --remove-orphans
+	$(DOCKER_COMPOSE) $(DOCKER_MAIN_PATH) down --remove-orphans
 
 config:
 	$(DOCKER_COMPOSE) $(DOCKER_TEST_PATH) config
