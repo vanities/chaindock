@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   # https://hub.docker.com/r/ethereum/client-go
-  ethereum-node:
+  ethereum:
     image: ethereum/client-go:alltools-latest
     ports:
       - 8545:8545
@@ -25,30 +25,33 @@ services:
       - CHAINLINK_TLS_PORT=0
       - SECURE_COOKIES=false
       - ALLOW_ORIGINS=*
-      - ETH_URL=ethereum-node:8545
-      - DATABASE_URL=postgresql://qt0GjtLJz5vaVfPBuTAuJrIB:Sn8d3peUDEySVIOzMcdKgWy2@postgres:8545/yrseXmL3TYijdthEzXoOleDE
+      - ETH_URL=ethereum:8545
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       - DATABASE_TIMEOUT=0
     command: local n
     depends_on:
-      - ethereum-node
+      - ethereum
       - postgres
     restart: on-failure
 
   postgres:
-    image: postgres:11.6
+    image: postgres:alpine
     ports:
       - 5432:5432
     volumes:
       - postgres:/var/lib/postgresql/data
+      - ./postgres/server.crt:/var/lib/postgresql/server.crt
+      - ./postgres/server.key:/var/lib/postgresql/server.key
     environment: 
-      - POSTGRES_USER=qt0GjtLJz5vaVfPBuTAuJrIB
-      - POSTGRES_PASSWORD=Sn8d3peUDEySVIOzMcdKgWy2
-      - POSTGRES_DB=yrseXmL3TYijdthEzXoOleDE
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    command: -c ssl=on -c ssl_cert_file=/var/lib/postgresql/server.crt -c ssl_key_file=/var/lib/postgresql/server.key
     restart: on-failure
 
 
 networks:
-  cnode:
+  chaindock:
 
 volumes:
   postgres:
