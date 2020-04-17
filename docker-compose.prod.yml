@@ -25,7 +25,7 @@ services:
       - CHAINLINK_TLS_PORT=0
       - SECURE_COOKIES=false
       - ALLOW_ORIGINS=*
-      - ETH_URL=ethereum:8545
+      - ETH_URL=ws://ethereum:8545
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       - DATABASE_TIMEOUT=0
     command: local n
