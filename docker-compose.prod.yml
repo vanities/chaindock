@@ -1,0 +1,54 @@
+version: '3.4'
+
+services:
+  # https://hub.docker.com/r/ethereum/client-go
+  ethereum-node:
+    image: ethereum/client-go:alltools-latest
+    ports:
+      - 8545:8545
+      - 30303:30303
+    volumes:
+      - ./ethereum/main:/root
+    command: geth --rpc --rpcaddr 0.0.0.0 --rpcport 8545 --password /ethereum/main/pass
+    restart: on-failure
+
+  chainlink:
+    image: smartcontract/chainlink:latest
+    ports:
+      - 6688:6688
+    volumes:
+      - ./chainlink:/chainlink
+    environment:
+      - ROOT=/chainlink
+      - LOG_LEVEL=debug
+      - ETH_CHAIN_ID=1
+      - CHAINLINK_TLS_PORT=0
+      - SECURE_COOKIES=false
+      - ALLOW_ORIGINS=*
+      - ETH_URL=ethereum-node:8545
+      - DATABASE_URL=postgresql://qt0GjtLJz5vaVfPBuTAuJrIB:Sn8d3peUDEySVIOzMcdKgWy2@postgres:8545/yrseXmL3TYijdthEzXoOleDE
+      - DATABASE_TIMEOUT=0
+    command: local n
+    depends_on:
+      - ethereum-node
+      - postgres
+    restart: on-failure
+
+  postgres:
+    image: postgres:11.6
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment: 
+      - POSTGRES_USER=qt0GjtLJz5vaVfPBuTAuJrIB
+      - POSTGRES_PASSWORD=Sn8d3peUDEySVIOzMcdKgWy2
+      - POSTGRES_DB=yrseXmL3TYijdthEzXoOleDE
+    restart: on-failure
+
+
+networks:
+  cnode:
+
+volumes:
+  postgres:
